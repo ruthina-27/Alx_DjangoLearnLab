@@ -4,6 +4,9 @@ from django.views.generic.list import ListView
 from .models import Library
 from .models import Book
 from django.http import HttpResponse
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import redirect
 
 # Function-based view to list all books
 
@@ -17,6 +20,17 @@ def list_books(request):
     if 'text' in request.GET:
         return HttpResponse(text_output, content_type='text/plain')
     return render(request, 'relationship_app/list_books.html', {'books': books})
+
+# User registration view
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+    return render(request, 'relationship_app/register.html', {'form': form})
 
 # Class-based view to display details for a specific library
 # Uses Django's DetailView
