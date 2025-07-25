@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h2>Book List</h2>
+  <ul>
+    {% for book in books %}
+      <li>{{ book.title }} by {{ book.author }} ({{ book.publication_year }})</li>
+    {% endfor %}
+  </ul>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit">Sample Post</button>
+  </form>
+{% endblock %} 
