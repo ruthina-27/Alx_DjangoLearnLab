@@ -45,6 +45,9 @@ X_FRAME_OPTIONS = 'DENY'  # Prevent clickjacking
 SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent MIME type sniffing
 SECURE_BROWSER_XSS_FILTER = True    # Enable browser XSS filter
 
+# Proxy SSL header (for when Django is behind a proxy/load balancer)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # --- End HTTPS and Secure Redirects ---
 
 ALLOWED_HOSTS = []
