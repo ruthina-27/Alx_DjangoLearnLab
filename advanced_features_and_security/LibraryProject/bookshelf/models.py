@@ -1,3 +1,5 @@
+# NOTE: The custom user model (CustomUser) is NOT defined in this file.
+# It is implemented in advanced_features_and_security/accounts/models.py as per project requirements.
 from django.db import models
 
 # Create your models here.
