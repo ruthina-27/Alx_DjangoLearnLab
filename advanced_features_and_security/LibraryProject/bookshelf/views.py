@@ -2,6 +2,9 @@ from django.contrib.auth.decorators import permission_required, login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Book
 from .forms import BookForm  # You may need to create this form if it doesn't exist
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_protect
+from django.http import HttpResponse
 
 # Create your views here.
 
@@ -9,7 +12,10 @@ from .forms import BookForm  # You may need to create this form if it doesn't ex
 @permission_required('bookshelf.can_view', raise_exception=True)
 def book_list(request):
     books = Book.objects.all()
-    return render(request, 'bookshelf/book_list.html', {'books': books})
+    response = render(request, 'bookshelf/book_list.html', {'books': books})
+    # Set a basic CSP header to mitigate XSS
+    response["Content-Security-Policy"] = "default-src 'self'"
+    return response
 
 @login_required
 @permission_required('bookshelf.can_view', raise_exception=True)
@@ -60,3 +66,5 @@ def book_delete(request, pk):
 #   - Admins: can_create, can_edit, can_delete, can_view
 # Assign users to groups via the admin interface.
 # The @permission_required decorator enforces these permissions in views.
+
+# CSP header is set in book_list view to reduce XSS risk. Adjust as needed for your static/media domains.

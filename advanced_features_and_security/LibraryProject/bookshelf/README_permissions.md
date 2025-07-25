@@ -26,3 +26,31 @@ Create the following groups in the Django admin:
 
 ## Notes
 - Permissions and groups can be managed at any time via the Django admin interface. 
+
+# Security Best Practices
+
+## Secure Settings
+- `DEBUG = False` in production
+- `SECURE_BROWSER_XSS_FILTER = True`
+- `X_FRAME_OPTIONS = 'DENY'`
+- `SECURE_CONTENT_TYPE_NOSNIFF = True`
+- `CSRF_COOKIE_SECURE = True`
+- `SESSION_COOKIE_SECURE = True`
+
+## CSRF Protection
+- All forms must include `{% csrf_token %}` in their templates.
+- Django's `@csrf_protect` is enabled by default for class-based and function-based views.
+
+## Content Security Policy (CSP)
+- The `book_list` view sets a `Content-Security-Policy` header to restrict content sources and reduce XSS risk.
+
+## Secure Data Access
+- All user input is handled via Django forms, which provide validation and sanitization.
+- Django ORM is used for all database access, preventing SQL injection.
+
+## Testing
+- Manually test forms and input fields for CSRF and XSS vulnerabilities.
+- Attempt to submit forms without CSRF tokens and verify a 403 error is returned.
+- Try injecting scripts in form fields and verify they are not executed.
+
+--- 
