@@ -53,4 +53,45 @@ Create the following groups in the Django admin:
 - Attempt to submit forms without CSRF tokens and verify a 403 error is returned.
 - Try injecting scripts in form fields and verify they are not executed.
 
+# HTTPS and Secure Redirects
+
+## Django Settings
+- `SECURE_SSL_REDIRECT = True`: Redirects all HTTP requests to HTTPS.
+- `SECURE_HSTS_SECONDS = 31536000`: Enforces HSTS for 1 year.
+- `SECURE_HSTS_INCLUDE_SUBDOMAINS = True`: Applies HSTS to all subdomains.
+- `SECURE_HSTS_PRELOAD = True`: Allows site to be included in browser preload lists.
+- `SESSION_COOKIE_SECURE = True` and `CSRF_COOKIE_SECURE = True`: Cookies only sent over HTTPS.
+- `X_FRAME_OPTIONS = 'DENY'`, `SECURE_CONTENT_TYPE_NOSNIFF = True`, `SECURE_BROWSER_XSS_FILTER = True`: Security headers for clickjacking, MIME sniffing, and XSS protection.
+
+## Deployment Configuration
+- Obtain and install an SSL/TLS certificate (e.g., via Let's Encrypt).
+- Configure your web server (Nginx/Apache) to serve your Django app over HTTPS and redirect all HTTP traffic to HTTPS.
+- Example Nginx snippet:
+
+```
+server {
+    listen 80;
+    server_name yourdomain.com;
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name yourdomain.com;
+    ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+    # ... other SSL settings ...
+    # proxy_pass to Django app
+}
+```
+
+## Security Review
+- All HTTP traffic is redirected to HTTPS, ensuring encrypted communication.
+- HSTS is enabled, instructing browsers to only use HTTPS for the site and subdomains.
+- Secure cookies and security headers are enforced.
+- **Potential improvements:**
+  - Regularly review SSL/TLS configuration and renew certificates.
+  - Use a service like [securityheaders.com](https://securityheaders.com/) to audit your HTTP headers.
+  - Consider enabling additional headers such as `Referrer-Policy` and `Feature-Policy` for further hardening.
+
 --- 

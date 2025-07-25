@@ -27,18 +27,25 @@ SECRET_KEY = 'django-insecure-7a@u52fdu+ba#d-o^)!wp3yj6_e^cz69_@#scn&+#e#f6lheeo
 # Set DEBUG to False in production for security
 DEBUG = False  # Set to True only during development
 
-# Enable browser XSS filter
-SECURE_BROWSER_XSS_FILTER = True
+# --- HTTPS and Secure Redirects ---
+# Redirect all HTTP requests to HTTPS
+SECURE_SSL_REDIRECT = True  # Enforces HTTPS for all requests
 
-# Prevent the site from being rendered in a frame (clickjacking protection)
-X_FRAME_OPTIONS = 'DENY'
+# HTTP Strict Transport Security (HSTS)
+SECURE_HSTS_SECONDS = 31536000  # 1 year in seconds
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True  # Apply HSTS to all subdomains
+SECURE_HSTS_PRELOAD = True  # Allow site to be included in browser preload lists
 
-# Prevent the browser from guessing content types
-SECURE_CONTENT_TYPE_NOSNIFF = True
+# Secure cookies (already set, but documented here for clarity)
+SESSION_COOKIE_SECURE = True  # Session cookies only sent over HTTPS
+CSRF_COOKIE_SECURE = True     # CSRF cookies only sent over HTTPS
 
-# Ensure cookies are only sent over HTTPS
-CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+# Security headers (already set, but documented here for clarity)
+X_FRAME_OPTIONS = 'DENY'  # Prevent clickjacking
+SECURE_CONTENT_TYPE_NOSNIFF = True  # Prevent MIME type sniffing
+SECURE_BROWSER_XSS_FILTER = True    # Enable browser XSS filter
+
+# --- End HTTPS and Secure Redirects ---
 
 ALLOWED_HOSTS = []
 
