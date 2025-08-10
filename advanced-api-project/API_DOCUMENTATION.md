@@ -20,10 +20,19 @@ All views are implemented using Django REST Framework's generic views for optima
 
 ### Book Management
 
-#### 1. List All Books
+#### 1. List All Books (with Filtering, Searching, and Ordering)
 - **URL**: `GET /api/books/`
-- **Description**: Retrieve a paginated list of all books
+- **Description**: Retrieve a paginated list of all books with advanced query capabilities
 - **Permissions**: Public access (AllowAny)
+- **Query Parameters**:
+  - **Filtering**: `?title=<title>&author=<author_id>&publication_year=<year>`
+  - **Searching**: `?search=<search_term>` (searches title and author name)
+  - **Ordering**: `?ordering=title,-publication_year` (prefix with - for descending)
+- **Examples**:
+  - `GET /api/books/?search=django` - Search for books with "django" in title or author name
+  - `GET /api/books/?author=1&publication_year=2023` - Filter by author ID 1 and year 2023
+  - `GET /api/books/?ordering=-publication_year` - Order by publication year (newest first)
+  - `GET /api/books/?search=python&ordering=title` - Search and order combined
 - **Response Format**:
 ```json
 [

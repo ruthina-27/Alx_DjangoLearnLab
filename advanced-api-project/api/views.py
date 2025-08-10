@@ -2,23 +2,44 @@ from rest_framework import generics, permissions
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 from django.shortcuts import get_object_or_404
 from .models import Book, Author
 from .serializers import BookSerializer, AuthorSerializer
 
-# ListView for retrieving all books
+# ListView for retrieving all books with filtering, searching, and ordering
 # Allows both authenticated and unauthenticated users to view the list of books
 class BookListView(generics.ListAPIView):
     """
-    API view to retrieve a list of all books.
+    API view to retrieve a list of all books with advanced query capabilities.
     
     - GET /api/books/ : Returns a list of all books
     - Permissions: Read-only access for all users (authenticated and unauthenticated)
     - Serializer: BookSerializer
+    - Features: Filtering, searching, and ordering
+    
+    Query Parameters:
+    - Filtering: ?title=<title>&author=<author_id>&publication_year=<year>
+    - Searching: ?search=<search_term> (searches title and author name)
+    - Ordering: ?ordering=title,-publication_year (prefix with - for descending)
     """
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [permissions.AllowAny]  # Allow read access to everyone
+    
+    # Enable filtering, searching, and ordering
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    
+    # Filtering configuration
+    filterset_fields = ['title', 'author', 'publication_year']
+    
+    # Search configuration
+    search_fields = ['title', 'author__name']  # Search in title and author name
+    
+    # Ordering configuration
+    ordering_fields = ['title', 'publication_year', 'author__name']
+    ordering = ['title']  # Default ordering by title
 
 # DetailView for retrieving a single book by ID
 # Allows both authenticated and unauthenticated users to view a specific book
