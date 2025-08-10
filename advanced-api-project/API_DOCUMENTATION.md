@@ -221,19 +221,51 @@ All views are implemented using Django REST Framework's generic views for optima
 
 ## Testing
 
+### Automated Unit Testing
+The API includes comprehensive unit tests in `api/test_views.py` covering:
+
+#### Test Classes
+- **BookAPITestCase**: Tests all Book CRUD operations and permissions
+- **AuthorAPITestCase**: Tests Author read operations and nested serialization
+- **PermissionTestCase**: Comprehensive permission testing for all endpoints
+- **FilteringSearchingOrderingTestCase**: Tests advanced query capabilities
+- **SerializerValidationTestCase**: Tests custom validation logic
+
+#### Test Coverage (34 Tests)
+- ✅ **CRUD Operations**: Create, Read, Update, Delete for all endpoints
+- ✅ **Permission Testing**: Authenticated vs unauthenticated access
+- ✅ **Filtering**: By title, author, and publication year
+- ✅ **Searching**: Full-text search across title and author name
+- ✅ **Ordering**: Ascending and descending sort by various fields
+- ✅ **Validation**: Custom serializer validation (future publication years)
+- ✅ **Error Handling**: 404 errors, validation failures, permission denials
+- ✅ **Combined Queries**: Multiple query parameters working together
+
+#### Running Tests
+```bash
+# Run all API tests
+python manage.py test api
+
+# Run specific test class
+python manage.py test api.test_views.BookAPITestCase
+
+# Run with verbose output
+python manage.py test api --verbosity=2
+```
+
+#### Test Results
+All 34 tests pass successfully, ensuring:
+- API endpoints behave correctly under various conditions
+- Permissions are properly enforced
+- Data validation works as expected
+- Advanced query features function properly
+
 ### Manual Testing
-The API has been thoroughly tested using:
+The API has also been manually tested using:
 - Django's test client for automated endpoint testing
 - Permission verification for both authenticated and unauthenticated access
 - Validation testing for edge cases (future publication years)
 - CRUD operation verification for all endpoints
-
-### Test Coverage
-- ✅ All CRUD operations functional
-- ✅ Permission system enforced correctly
-- ✅ Custom validation working
-- ✅ Nested serialization operational
-- ✅ Error handling comprehensive
 
 ## Usage Examples
 
