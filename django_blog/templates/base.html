@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Django Blog{% endblock %}</title>
+    <title>{% block title %}Blog{% endblock %}</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
@@ -12,12 +12,21 @@
         <div class="container">
             <div class="header-content">
                 <div class="logo">
-                    <h1><a href="{% url 'blog:index' %}" style="color: white; text-decoration: none;">Django Blog</a></h1>
+                    <h1><a href="{% url 'blog:index' %}" style="color: white; text-decoration: none;">My Blog</a></h1>
                 </div>
                 <nav>
                     <ul>
                         <li><a href="{% url 'blog:index' %}">Home</a></li>
-                        <li><a href="/admin/">Admin</a></li>
+                        {% if user.is_authenticated %}
+                            <li><a href="{% url 'blog:profile' %}">Profile</a></li>
+                            <li><a href="{% url 'blog:logout' %}">Logout</a></li>
+                            {% if user.is_staff %}
+                                <li><a href="/admin/">Admin</a></li>
+                            {% endif %}
+                        {% else %}
+                            <li><a href="{% url 'blog:login' %}">Login</a></li>
+                            <li><a href="{% url 'blog:register' %}">Register</a></li>
+                        {% endif %}
                     </ul>
                 </nav>
             </div>
@@ -33,7 +42,7 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2024 Django Blog. Built with Django.</p>
+            <p>&copy; 2024 My Blog.</p>
         </div>
     </footer>
 
