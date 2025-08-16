@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Login - Blog{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/login.css' %}">
 <div class="auth-container">
     <div class="auth-card">
         <h2 class="auth-title">Login</h2>
@@ -17,6 +19,7 @@
         
         <form method="post" class="auth-form">
             {% csrf_token %}
+            <!-- CSRF token ensures protection against CSRF attacks -->
             
             <div class="form-group">
                 <label for="{{ form.username.id_for_label }}">Username:</label>
@@ -50,7 +53,7 @@
                 </div>
             {% endif %}
             
-            <button type="submit" class="auth-btn">Login</button>
+            <button type="submit" class="auth-btn login-btn">Login</button>
         </form>
         
         <div class="auth-links">

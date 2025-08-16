@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Register - Blog{% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
 <div class="auth-container">
     <div class="auth-card">
         <h2 class="auth-title">Create Account</h2>
@@ -17,6 +19,7 @@
         
         <form method="post" class="auth-form">
             {% csrf_token %}
+            <!-- CSRF token ensures protection against CSRF attacks -->
             
             <div class="form-group">
                 <label for="{{ form.username.id_for_label }}">Username:</label>
@@ -112,7 +115,7 @@
                 </div>
             {% endif %}
             
-            <button type="submit" class="auth-btn">Create Account</button>
+            <button type="submit" class="auth-btn register-btn">Create Account</button>
         </form>
         
         <div class="auth-links">

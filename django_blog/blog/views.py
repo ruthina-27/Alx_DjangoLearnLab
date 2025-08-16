@@ -38,12 +38,16 @@ def register(request):
 
 @login_required
 def profile(request):
+    """View that allows authenticated users to view and edit their profile details.
+    This view handles POST requests to update user information."""
     if request.method == 'POST':
         form = ProfileForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
             messages.success(request, 'Your profile has been updated successfully!')
             return redirect('blog:profile')
+        else:
+            messages.error(request, 'Please correct the errors below.')
     else:
         form = ProfileForm(instance=request.user)
     
