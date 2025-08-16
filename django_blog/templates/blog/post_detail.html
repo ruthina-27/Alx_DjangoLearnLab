@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ post.title }} - Django Blog{% endblock %}
+
+{% block content %}
+<article class="post">
+    <h1 class="post-title">{{ post.title }}</h1>
+    <div class="post-meta">
+        <span>By {{ post.author.username }}</span> | 
+        <span>{{ post.published_date|date:"F d, Y at g:i A" }}</span>
+    </div>
+    <div class="post-content">
+        {{ post.content|linebreaks }}
+    </div>
+</article>
+
+<div class="post-navigation mt-2">
+    <a href="{% url 'blog:index' %}" class="read-more">← Back to Home</a>
+</div>
+{% endblock %}
