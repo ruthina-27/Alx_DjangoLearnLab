@@ -51,6 +51,11 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Authentication settings
+LOGIN_URL = 'blog:login'
+LOGIN_REDIRECT_URL = 'blog:index'
+LOGOUT_REDIRECT_URL = 'blog:index'
+
 ROOT_URLCONF = 'django_blog.urls'
 
 TEMPLATES = [
