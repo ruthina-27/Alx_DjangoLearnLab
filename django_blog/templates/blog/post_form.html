@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }} - Blog{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+
+<div class="container">
+    <div class="form-container">
+        <div class="form-header">
+            <h1 class="form-title">{{ title }}</h1>
+            <a href="{% url 'blog:post-list' %}" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> Back to Posts
+            </a>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" class="post-form">
+            {% csrf_token %}
+            <!-- CSRF token ensures protection against CSRF attacks -->
+            
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}" class="form-label">
+                    <i class="fas fa-heading"></i> Title
+                </label>
+                {{ form.title }}
+                {% if form.title.help_text %}
+                    <small class="form-help">{{ form.title.help_text }}</small>
+                {% endif %}
+                {% if form.title.errors %}
+                    <div class="form-errors">
+                        {% for error in form.title.errors %}
+                            <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.content.id_for_label }}" class="form-label">
+                    <i class="fas fa-align-left"></i> Content
+                </label>
+                {{ form.content }}
+                {% if form.content.help_text %}
+                    <small class="form-help">{{ form.content.help_text }}</small>
+                {% endif %}
+                {% if form.content.errors %}
+                    <div class="form-errors">
+                        {% for error in form.content.errors %}
+                            <span class="error">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if form.non_field_errors %}
+                <div class="form-errors">
+                    {% for error in form.non_field_errors %}
+                        <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> 
+                    {% if title == 'Create New Post' %}
+                        Create Post
+                    {% else %}
+                        Update Post
+                    {% endif %}
+                </button>
+                <a href="{% url 'blog:post-list' %}" class="btn btn-secondary">
+                    <i class="fas fa-times"></i> Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

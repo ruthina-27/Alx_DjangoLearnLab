@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from .models import Post
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -44,3 +45,28 @@ class ProfileForm(forms.ModelForm):
             'last_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Last Name'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Email Address'}),
         }
+
+
+class PostForm(forms.ModelForm):
+    """Form for creating and updating blog posts."""
+    
+    class Meta:
+        model = Post
+        fields = ['title', 'content']
+        widgets = {
+            'title': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter post title...',
+                'maxlength': '200'
+            }),
+            'content': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Write your blog post content here...',
+                'rows': 10
+            }),
+        }
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['title'].help_text = 'Maximum 200 characters'
+        self.fields['content'].help_text = 'Write your blog post content'
