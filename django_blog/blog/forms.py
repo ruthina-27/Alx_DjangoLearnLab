@@ -73,7 +73,7 @@ class PostForm(forms.ModelForm):
 
 
 class CommentForm(forms.ModelForm):
-    """Form for creating and updating comments."""
+    """Form for creating and updating comments with validation rules."""
     
     class Meta:
         model = Comment
@@ -82,10 +82,27 @@ class CommentForm(forms.ModelForm):
             'content': forms.Textarea(attrs={
                 'class': 'form-control',
                 'placeholder': 'Write your comment here...',
-                'rows': 4
+                'rows': 4,
+                'minlength': '10',
+                'maxlength': '1000'
             }),
         }
         
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['content'].help_text = 'Share your thoughts about this post'
+        self.fields['content'].help_text = 'Share your thoughts about this post (10-1000 characters)'
+        self.fields['content'].required = True
+        
+    def clean_content(self):
+        """Custom validation for comment content."""
+        content = self.cleaned_data.get('content')
+        if content:
+            content = content.strip()
+            if len(content) < 10:
+                raise forms.ValidationError('Comment must be at least 10 characters long.')
+            if len(content) > 1000:
+                raise forms.ValidationError('Comment cannot exceed 1000 characters.')
+            # Check for spam-like content
+            if content.lower() in ['spam', 'test', 'hello', 'hi']:
+                raise forms.ValidationError('Please write a meaningful comment.')
+        return content

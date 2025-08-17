@@ -156,27 +156,29 @@ class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 # Comment Views
 
-@login_required
-def add_comment(request, post_id):
-    """Allow authenticated users to add comments to blog posts."""
-    post = get_object_or_404(Post, id=post_id)
+class CommentCreateView(LoginRequiredMixin, CreateView):
+    """Allow authenticated users to create comments on blog posts."""
+    model = Comment
+    form_class = CommentForm
+    template_name = 'blog/add_comment.html'
     
-    if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = post
-            comment.author = request.user
-            comment.save()
-            messages.success(request, 'Your comment has been added successfully!')
-            return redirect('blog:post-detail', pk=post.id)
-    else:
-        form = CommentForm()
+    def dispatch(self, request, *args, **kwargs):
+        self.post = get_object_or_404(Post, id=kwargs['post_id'])
+        return super().dispatch(request, *args, **kwargs)
     
-    return render(request, 'blog/add_comment.html', {
-        'form': form,
-        'post': post
-    })
+    def form_valid(self, form):
+        form.instance.post = self.post
+        form.instance.author = self.request.user
+        messages.success(self.request, 'Your comment has been added successfully!')
+        return super().form_valid(form)
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['post'] = self.post
+        return context
+    
+    def get_success_url(self):
+        return reverse('blog:post-detail', kwargs={'pk': self.post.pk})
 
 
 class CommentUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
