@@ -10,7 +10,7 @@ from django.urls import reverse_lazy, reverse
 from django.db.models import Q
 from .models import Post, Comment
 from .forms import CustomUserCreationForm, UserUpdateForm, ProfileForm, PostForm, CommentForm
-from .search_views import SearchResultsView, PostsByTagView, tag_list
+from .search_views import SearchResultsView, PostsByTagView, PostByTagListView, tag_list
 
 
 def search_posts(request):
