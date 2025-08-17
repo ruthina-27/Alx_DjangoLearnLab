@@ -7,8 +7,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib import messages
 from django.urls import reverse_lazy, reverse
-from .models import Post, Comment
+from django.db.models import Q
+from .models import Post, Comment, Tag
 from .forms import CustomUserCreationForm, UserUpdateForm, ProfileForm, PostForm, CommentForm
+from .search_views import SearchResultsView, PostsByTagView, tag_list
 
 
 def index(request):

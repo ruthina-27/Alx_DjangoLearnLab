@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Posts tagged "{{ tag.name }}" - Blog{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+<div class="container">
+    <div class="tag-header">
+        <h1 class="page-title">
+            <i class="fas fa-tag"></i> Posts tagged "{{ tag.name }}"
+        </h1>
+        <p class="tag-info">
+            {{ total_posts }} post{{ total_posts|pluralize }} found with this tag
+        </p>
+    </div>
+
+    {% if posts %}
+        <div class="posts-grid">
+            {% for post in posts %}
+                <article class="post-card">
+                    <div class="post-header">
+                        <h2 class="post-title">
+                            <a href="{% url 'blog:post-detail' post.pk %}">{{ post.title }}</a>
+                        </h2>
+                        <div class="post-meta">
+                            <span class="post-author">
+                                <i class="fas fa-user"></i> {{ post.author.username }}
+                            </span>
+                            <span class="post-date">
+                                <i class="fas fa-calendar"></i> {{ post.published_date|date:"F d, Y" }}
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="post-excerpt">
+                        {{ post.content|truncatewords:30|linebreaks }}
+                    </div>
+                    
+                    {% if post.tags.exists %}
+                        <div class="post-tags">
+                            {% for tag_item in post.tags.all %}
+                                <a href="{% url 'blog:posts-by-tag' tag_item.name %}" class="tag-link">
+                                    <span class="badge {% if tag_item.name == tag.name %}bg-primary{% else %}bg-secondary{% endif %}">
+                                        {{ tag_item.name }}
+                                    </span>
+                                </a>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    
+                    <div class="post-actions">
+                        <a href="{% url 'blog:post-detail' post.pk %}" class="btn btn-primary">
+                            Read More <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        {% if is_paginated %}
+            <nav aria-label="Tag posts pagination" class="pagination-nav">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1">First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+                        </li>
+                    {% endif %}
+
+                    <li class="page-item active">
+                        <span class="page-link">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                        </span>
+                    </li>
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Last</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="no-results">
+            <div class="empty-state">
+                <i class="fas fa-tag fa-3x"></i>
+                <h3>No Posts Found</h3>
+                <p>No posts are currently tagged with "{{ tag.name }}".</p>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="tag-actions">
+        <a href="{% url 'blog:tag-list' %}" class="btn btn-outline">
+            <i class="fas fa-tags"></i> All Tags
+        </a>
+        <a href="{% url 'blog:post-list' %}" class="btn btn-outline">
+            <i class="fas fa-list"></i> All Posts
+        </a>
+    </div>
+</div>
+{% endblock %}

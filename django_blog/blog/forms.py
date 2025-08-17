@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Post, Comment
+from .models import Post, Comment, Tag
 
 
 class CustomUserCreationForm(UserCreationForm):
@@ -48,7 +48,18 @@ class ProfileForm(forms.ModelForm):
 
 
 class PostForm(forms.ModelForm):
-    """Form for creating and updating blog posts."""
+    """Form for creating and updating blog posts with tag functionality."""
+    tags_input = forms.CharField(
+        max_length=500,
+        required=False,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Enter tags separated by commas (e.g., django, python, web)',
+            'data-toggle': 'tooltip',
+            'title': 'Separate multiple tags with commas'
+        }),
+        help_text='Enter tags separated by commas. New tags will be created automatically.'
+    )
     
     class Meta:
         model = Post
@@ -70,6 +81,29 @@ class PostForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields['title'].help_text = 'Maximum 200 characters'
         self.fields['content'].help_text = 'Write your blog post content'
+        
+        # Pre-populate tags field if editing existing post
+        if self.instance.pk:
+            self.fields['tags_input'].initial = ', '.join([tag.name for tag in self.instance.tags.all()])
+    
+    def save(self, commit=True):
+        post = super().save(commit=commit)
+        if commit:
+            self._save_tags(post)
+        return post
+    
+    def _save_tags(self, post):
+        """Process and save tags for the post."""
+        tags_input = self.cleaned_data.get('tags_input', '')
+        if tags_input:
+            # Clear existing tags
+            post.tags.clear()
+            # Process new tags
+            tag_names = [tag.strip().lower() for tag in tags_input.split(',') if tag.strip()]
+            for tag_name in tag_names:
+                if tag_name:  # Ensure tag name is not empty
+                    tag, created = Tag.objects.get_or_create(name=tag_name)
+                    post.tags.add(tag)
 
 
 class CommentForm(forms.ModelForm):
