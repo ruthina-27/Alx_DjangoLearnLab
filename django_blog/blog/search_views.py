@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView
 from django.db.models import Q
-from .models import Post, Tag
+from .models import Post
+from taggit.models import Tag
 
 
 class SearchResultsView(ListView):
@@ -54,6 +55,6 @@ def tag_list(request):
     for tag in tags:
         tag_data.append({
             'tag': tag,
-            'post_count': tag.posts.count()
+            'post_count': tag.taggit_taggeditem_items.count()
         })
     return render(request, 'blog/tag_list.html', {'tag_data': tag_data})

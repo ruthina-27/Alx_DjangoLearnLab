@@ -1,20 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.urls import reverse
-
-
-class Tag(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse('blog:posts-by-tag', kwargs={'tag_name': self.name})
+from taggit.managers import TaggableManager
 
 
 class Post(models.Model):
@@ -22,7 +9,7 @@ class Post(models.Model):
     content = models.TextField()
     published_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='blog_posts')
-    tags = models.ManyToManyField(Tag, blank=True, related_name='posts')
+    tags = TaggableManager()
 
     class Meta:
         ordering = ['-published_date']

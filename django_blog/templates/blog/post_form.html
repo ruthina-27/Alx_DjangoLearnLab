@@ -62,16 +62,16 @@
             </div>
 
             <div class="form-group">
-                <label for="{{ form.tags_input.id_for_label }}" class="form-label">
+                <label for="{{ form.tags.id_for_label }}" class="form-label">
                     <i class="fas fa-tags"></i> Tags
                 </label>
-                {{ form.tags_input }}
-                {% if form.tags_input.help_text %}
-                    <small class="form-help">{{ form.tags_input.help_text }}</small>
+                {{ form.tags }}
+                {% if form.tags.help_text %}
+                    <small class="form-help">{{ form.tags.help_text }}</small>
                 {% endif %}
-                {% if form.tags_input.errors %}
+                {% if form.tags.errors %}
                     <div class="form-errors">
-                        {% for error in form.tags_input.errors %}
+                        {% for error in form.tags.errors %}
                             <span class="error">{{ error }}</span>
                         {% endfor %}
                     </div>
