@@ -13,6 +13,25 @@ from .forms import CustomUserCreationForm, UserUpdateForm, ProfileForm, PostForm
 from .search_views import SearchResultsView, PostsByTagView, tag_list
 
 
+def search_posts(request):
+    """Search functionality using Post.objects.filter with specific field lookups."""
+    query = request.GET.get('q', '')
+    posts = Post.objects.none()
+    
+    if query:
+        posts = Post.objects.filter(
+            Q(title__icontains=query) |
+            Q(content__icontains=query) |
+            Q(tags__name__icontains=query)
+        ).distinct()
+    
+    return render(request, 'blog/search_results.html', {
+        'posts': posts,
+        'query': query,
+        'total_results': posts.count()
+    })
+
+
 def index(request):
     posts = Post.objects.all()[:5]
     return render(request, 'blog/index.html', {'posts': posts})
