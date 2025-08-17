@@ -65,12 +65,7 @@ class PostForm(forms.ModelForm):
                 'placeholder': 'Write your blog post content here...',
                 'rows': 10
             }),
-            'tags': TagWidget(attrs={
-                'class': 'form-control',
-                'placeholder': 'Enter tags separated by commas (e.g., django, python, web)',
-                'data-toggle': 'tooltip',
-                'title': 'Separate multiple tags with commas'
-            }),
+            'tags': TagWidget(),
         }
         
     def __init__(self, *args, **kwargs):
@@ -78,6 +73,14 @@ class PostForm(forms.ModelForm):
         self.fields['title'].help_text = 'Maximum 200 characters'
         self.fields['content'].help_text = 'Write your blog post content'
         self.fields['tags'].help_text = 'Enter tags separated by commas. New tags will be created automatically.'
+        
+        # Apply additional styling to tags field
+        self.fields['tags'].widget.attrs.update({
+            'class': 'form-control',
+            'placeholder': 'Enter tags separated by commas (e.g., django, python, web)',
+            'data-toggle': 'tooltip',
+            'title': 'Separate multiple tags with commas'
+        })
 
 
 class CommentForm(forms.ModelForm):
