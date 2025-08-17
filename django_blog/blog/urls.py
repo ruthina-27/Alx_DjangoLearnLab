@@ -21,11 +21,6 @@ urlpatterns = [
     # Legacy post detail URL (for backward compatibility)
     path('post/<int:post_id>/', views.post_detail, name='post_detail'),
     
-    # Authentication URLs
-    path('login/', views.CustomLoginView.as_view(), name='login'),
-    path('logout/', views.CustomLogoutView.as_view(), name='logout'),
-    path('register/', views.register, name='register'),
-    path('profile/', views.profile, name='profile'),
     
     # Comment URLs
     path('posts/<int:post_id>/comments/new/', views.CommentCreateView.as_view(), name='add-comment'),
