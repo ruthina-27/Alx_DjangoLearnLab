@@ -1,4 +1,5 @@
 django
 djangorestframework
 djangorestframework-authtoken
+django-filter
 Pillow
