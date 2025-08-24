@@ -1,10 +1,13 @@
-from rest_framework import viewsets, permissions, filters
+from rest_framework import viewsets, permissions, filters, generics
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Q
+from django.contrib.auth import get_user_model
 from .models import Post, Comment
 from .serializers import PostSerializer, PostDetailSerializer, CommentSerializer
+
+User = get_user_model()
 
 
 class IsAuthorOrReadOnly(permissions.BasePermission):
@@ -42,6 +45,28 @@ class PostViewSet(viewsets.ModelViewSet):
         post = self.get_object()
         comments = Comment.objects.filter(post=post)
         serializer = CommentSerializer(comments, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated])
+    def feed(self, request):
+        """Get posts from users that the current user follows"""
+        user = request.user
+        following_users = user.following.all()
+        
+        if not following_users.exists():
+            # If user doesn't follow anyone, return empty feed
+            posts = Post.objects.none()
+        else:
+            # Get posts from followed users
+            posts = Post.objects.filter(author__in=following_users).order_by('-created_at')
+        
+        # Apply pagination
+        page = self.paginate_queryset(posts)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        
+        serializer = self.get_serializer(posts, many=True)
         return Response(serializer.data)
 
 

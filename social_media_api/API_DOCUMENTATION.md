@@ -1,28 +1,22 @@
 # Social Media API Documentation
 
 ## Overview
-A Django REST Framework-based social media API that allows users to create accounts, manage posts, and interact through comments.
-
-## Base URL
-```
-http://localhost:8000/api/
-```
+This is a RESTful API for a social media platform built with Django REST Framework. It includes user authentication, posts, comments, user following system, and personalized feeds.
 
 ## Authentication
 The API uses Token-based authentication. Include the token in the Authorization header:
 ```
-Authorization: Token <your-token-here>
+Authorization: Token your_token_here
 ```
 
 ## Endpoints
 
 ### Authentication Endpoints
 
-#### Register User
+#### Register
 - **URL**: `/api/accounts/register/`
 - **Method**: `POST`
-- **Auth Required**: No
-- **Data**:
+- **Body**:
 ```json
 {
     "username": "string",
@@ -30,43 +24,61 @@ Authorization: Token <your-token-here>
     "password": "string"
 }
 ```
-- **Success Response**: `201 Created`
-```json
-{
-    "token": "string"
-}
-```
+- **Response**: Returns authentication token
 
-#### Login User
+#### Login
 - **URL**: `/api/accounts/login/`
 - **Method**: `POST`
-- **Auth Required**: No
-- **Data**:
+- **Body**:
 ```json
 {
     "username": "string",
     "password": "string"
 }
 ```
-- **Success Response**: `200 OK`
-```json
-{
-    "token": "string"
-}
-```
+- **Response**: Returns authentication token
 
-#### Get User Profile
+#### Profile
 - **URL**: `/api/accounts/profile/`
 - **Method**: `GET`
+- **Authentication**: Required
+- **Response**: Returns current user's profile information
+
+### User Management Endpoints
+
+#### List Users
+- **URL**: `/api/accounts/users/`
+- **Method**: `GET`
+- **Authentication**: Required
+- **Response**: Returns list of all users with follower/following counts
+
+#### User Detail
+- **URL**: `/api/accounts/users/{id}/`
+- **Method**: `GET`
+- **Authentication**: Required
+- **Response**: Returns specific user details including follow status
+
+#### Follow User
+- **URL**: `/api/accounts/follow/{user_id}/`
+- **Method**: `POST`
+- **Authentication**: Required
+- **Response**: Confirmation message
+- **Notes**: Cannot follow yourself or already followed users
+
+#### Unfollow User
+- **URL**: `/api/accounts/unfollow/{user_id}/`
+- **Method**: `POST`
 - **Auth Required**: Yes
 - **Success Response**: `200 OK`
 ```json
 {
-    "id": 1,
-    "username": "string",
-    "email": "string",
-    "bio": "string",
-    "profile_picture": "string"
+    "message": "You have unfollowed username"
+}
+```
+- **Error Response**: `400 Bad Request`
+```json
+{
+    "error": "You are not following this user"
 }
 ```
 
@@ -162,6 +174,31 @@ Authorization: Token <your-token-here>
 - **Auth Required**: No
 - **Success Response**: `200 OK` (returns array of comments)
 
+#### Get Feed
+- **URL**: `/api/posts/feed/`
+- **Method**: `GET`
+- **Auth Required**: Yes
+- **Description**: Returns posts from users that the current user follows
+- **Success Response**: `200 OK` (paginated response)
+```json
+{
+    "count": 50,
+    "next": "http://localhost:8000/api/posts/feed/?page=2",
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "author": "followed_user",
+            "author_id": 2,
+            "title": "Post from followed user",
+            "content": "This is content from someone I follow",
+            "created_at": "2023-01-01T12:00:00Z",
+            "updated_at": "2023-01-01T12:00:00Z"
+        }
+    ]
+}
+```
+
 ### Comments Endpoints
 
 #### List Comments
@@ -244,6 +281,18 @@ Authorization: Token <your-token-here>
 
 ## Features
 
+### User Following System
+- Users can follow and unfollow other users
+- User profiles show follower and following counts
+- User profiles indicate if the current user is following them
+- Feed functionality shows posts from followed users only
+
+### Feed Algorithm
+- Feed displays posts from users the current user follows
+- Posts are ordered by creation date (most recent first)
+- Empty feed if user doesn't follow anyone
+- Supports pagination like other endpoints
+
 ### Pagination
 - All list endpoints support pagination with 10 items per page
 - Use `page` parameter to navigate pages
@@ -252,12 +301,14 @@ Authorization: Token <your-token-here>
 ### Filtering and Search
 - **Posts**: Filter by `author`, search in `title` and `content`
 - **Comments**: Filter by `post` and `author`
+- **Users**: Browse all users for discovery
 - **Ordering**: Use `ordering` parameter with field names (prefix with `-` for descending)
 
 ### Permissions
 - **Read access**: Available to all users (authenticated and anonymous)
 - **Write access**: Requires authentication
 - **Edit/Delete**: Only available to the author of the content
+- **Follow/Unfollow**: Requires authentication, users can only modify their own following list
 
 ## Setup Instructions
 
@@ -309,6 +360,24 @@ curl "http://localhost:8000/api/posts/?search=first&ordering=-created_at"
 
 # Get post detail
 curl http://localhost:8000/api/posts/1/
+
+# Get personalized feed
+curl -H "Authorization: Token YOUR_TOKEN" http://localhost:8000/api/posts/feed/
+```
+
+### Follow and Unfollow Users
+```bash
+# List all users
+curl -H "Authorization: Token YOUR_TOKEN" http://localhost:8000/api/accounts/users/
+
+# Get user details
+curl -H "Authorization: Token YOUR_TOKEN" http://localhost:8000/api/accounts/users/2/
+
+# Follow a user
+curl -X POST -H "Authorization: Token YOUR_TOKEN" http://localhost:8000/api/accounts/follow/2/
+
+# Unfollow a user
+curl -X POST -H "Authorization: Token YOUR_TOKEN" http://localhost:8000/api/accounts/unfollow/2/
 ```
 
 ### Create and Manage Comments
