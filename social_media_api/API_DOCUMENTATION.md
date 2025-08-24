@@ -249,6 +249,60 @@ Authorization: Token your_token_here
 - **Auth Required**: Yes (must be author)
 - **Success Response**: `204 No Content`
 
+### Likes and Notifications
+
+#### Like Post
+- **URL**: `/api/posts/{id}/like/`
+- **Method**: `POST`
+- **Auth Required**: Yes
+- **Success Response**: `201 Created`
+```json
+{
+    "message": "Post liked successfully"
+}
+```
+- **Notes**: Creates notification for post author (if different user)
+
+#### Unlike Post
+- **URL**: `/api/posts/{id}/unlike/`
+- **Method**: `POST`
+- **Auth Required**: Yes
+- **Success Response**: `200 OK`
+```json
+{
+    "message": "Post unliked successfully"
+}
+```
+
+#### List Notifications
+- **URL**: `/api/notifications/`
+- **Method**: `GET`
+- **Auth Required**: Yes
+- **Success Response**: `200 OK`
+```json
+[
+    {
+        "id": 1,
+        "actor_username": "john_doe",
+        "verb": "liked your post",
+        "target_type": "post",
+        "timestamp": "2023-01-01T12:00:00Z",
+        "read": false
+    }
+]
+```
+
+#### Mark Notification as Read
+- **URL**: `/api/notifications/{id}/read/`
+- **Method**: `POST`
+- **Auth Required**: Yes
+- **Success Response**: `200 OK`
+```json
+{
+    "message": "Notification marked as read"
+}
+```
+
 ## Error Responses
 
 ### 400 Bad Request
